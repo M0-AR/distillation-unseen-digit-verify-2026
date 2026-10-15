@@ -5,11 +5,19 @@
 [![Docker ready](https://img.shields.io/badge/Docker-ready-blue.svg)](docker-compose.yml)
 [![Tests 11 passed](https://img.shields.io/badge/tests-11_passed-brightgreen.svg)](tests/)
 [![Reproducible from scratch](https://img.shields.io/badge/reproducible-from_scratch-orange.svg)](src/)
-[![Pages demo](https://img.shields.io/badge/demo-preview.html-purple.svg)](preview.html)
+[![Pages demo](https://img.shields.io/badge/demo-live_page-purple.svg)](https://M0-AR.github.io/distillation-unseen-digit-verify-2026/)
 
 > **One-line pitch:** a 9,610-number student that never sees a “3” still reads 3s at ~93% — by copying a teacher’s *uncertainty*, not just its answers.
 
-**Live web version of this README:** open [`preview.html`](preview.html) (same as [`docs/index.html`](docs/index.html)) — beautiful single-file page with temperature slider + 8-question interactive quiz. Publish it free: GitHub → Settings → Pages → Deploy from branch → `main` + `/docs` → Visit Site.
+**Live interactive demo — click to open in your browser:**
+
+| Entry | Link |
+|---|---|
+| `/` (site home) | https://M0-AR.github.io/distillation-unseen-digit-verify-2026/ |
+| `/preview.html` | https://M0-AR.github.io/distillation-unseen-digit-verify-2026/preview.html |
+| `/docs/preview.html` | https://M0-AR.github.io/distillation-unseen-digit-verify-2026/docs/preview.html |
+
+*All three resolve when Pages source is `/` (root). If your Pages source is `/docs`, the first two still work and `/docs/preview.html` 404s — that 404 is expected (see [Web demo + GitHub Pages](#-web-demo--github-pages)). Recommended setting for all-green: Branch `main`, Folder `/` (root). Local file: [`preview.html`](preview.html) = [`docs/index.html`](docs/index.html) = [`docs/preview.html`](docs/preview.html) — single-file page with temperature slider + 8-question quiz.*
 
 ![Demo: student learns unseen 3s](assets/demo.gif)
 
@@ -171,15 +179,34 @@ Outputs: `results/results.json` (machine) + `results/SUMMARY.md` (human).
 
 ## 🌐 Web demo + GitHub Pages
 
-`preview.html` (root, for README links) and `docs/index.html` (for Pages) are the same beautiful offline page: abstract, stats, beginner guide, T-slider playground, results, 8-question quiz with instant feedback, reproduce commands, user stories.
+`preview.html` (root), `docs/index.html`, and `docs/preview.html` are the same beautiful offline page: abstract, stats, beginner guide, T-slider playground, results, 8-question quiz with instant feedback, reproduce commands, user stories. `index.html` (root) is a redirect to `preview.html` with fallback links. `.nojekyll` sits in both `/` and `/docs` so Pages serves everything static.
 
-Publish free in 1 minute:
+**Click to verify rendering:**
+
+| Path | URL | Source `/` (root) | Source `/docs` |
+|---|---|---|---|
+| `/` | https://M0-AR.github.io/distillation-unseen-digit-verify-2026/ | 200 (redirect → preview) | 200 (`docs/index.html`) |
+| `/preview.html` | https://M0-AR.github.io/distillation-unseen-digit-verify-2026/preview.html | 200 | 200 (`docs/preview.html`) |
+| `/docs/preview.html` | https://M0-AR.github.io/distillation-unseen-digit-verify-2026/docs/preview.html | 200 | 404 (expected — file is above the source) |
+
+Why: the entry file must sit at the top of the chosen source, and every other URL mirrors the repo path *under that source* (`/docs` source → `docs/x.html` serves at `/x.html`; `/` source → `docs/x.html` serves at `/docs/x.html`). A green “Deployed” badge only proves something built — it never proves your path exists. Diagnose in 10 seconds:
+
+```bash
+BASE="https://M0-AR.github.io/distillation-unseen-digit-verify-2026"
+for p in "" "preview.html" "docs/preview.html"; do
+  printf "%s -> " "/$p"
+  curl -s -o /dev/null -w "%{http_code}\n" "$BASE/$p"
+done
+```
+
+Publish free in 1 minute (all three green):
 
 1. Push this repo to GitHub.
-2. GitHub → **Settings → Pages → Deploy from branch** → Branch `main`, Folder `/docs` → Save.
-3. Open `https://<you>.github.io/<repo>/` → the demo is live. Share that link in the README header.
+2. GitHub → **Settings → Pages → Deploy from branch** → Branch `main`, Folder `/` **(root)** → Save.
+3. Wait 1–2 min for the “pages build and deployment” Action, then open the three links above.
+4. Prefer `/docs` publishing instead? It still works — `/` and `/preview.html` stay green; only `/docs/preview.html` 404s by design.
 
-Local check: `python3 -m http.server -d docs 8000` → `http://localhost:8000`.
+Local check: `python3 -m http.server 8000` → `http://localhost:8000/`, `/preview.html`, `/docs/preview.html`.
 
 ---
 
@@ -277,7 +304,7 @@ src/live_verify.py live UCI check
 src/make_assets.py assets/*.png + demo.gif from real runs
 tests/             11 green
 assets/            images + demo.gif (+ preview_shot.png)
-docs/index.html    Pages site (/docs) · preview.html = same file at root
+docs/index.html + docs/preview.html  Pages pages (mirrors) · preview.html + index.html at root (redirect)
 results/           results.json + SUMMARY.md
 ```
 
