@@ -1,0 +1,11 @@
+services:
+  bench:
+    build: .
+    volumes:
+      - ./results:/app/results
+    command: python -m src.experiments --mode fast
+  paper:
+    build: .
+    volumes:
+      - ./results:/app/results
+    command: python -m src.experiments --mode full
